@@ -1,0 +1,1 @@
+IntuneWinAppUtil.exe -c .\source -s .\install.ps1 -o .\destination -q
