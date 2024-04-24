@@ -1,2 +1,0 @@
-New-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\DeviceGuard" -Name "EnableVirtualizationBasedSecurity" -Value 1
-Write-Host "HKLM:\System\CurrentControlSet\Control\DeviceGuard\EnableVirtualizationBasedSecurity was set to 1"
