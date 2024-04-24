@@ -1,0 +1,2 @@
+powershell.exe -noprofile -executionpolicy bypass -file .\install.ps1
+powershell.exe -noprofile -executionpolicy bypass -file .\uninstall.ps1
