@@ -1,12 +1,32 @@
+# This script is working for
+
+# Endpoint Security section of Intune:
+# Security Baselines
+# Defender Baselines
+# Edge Baselines
+# Microsoft 365 Apps Baselines
+
+# Device Management section of Intune:
+# MEM -Settings catalog
+# MEM - Device restrictions
+# MEM - Wi-Fi profiles
+# MEM - Endpoint protection profiles
+# MEM - Health monitoring
+
+# The letter "Ł" can be used as a seperator in Excel. Work in progress!
+
 import bs4
 import requests
 from bs4 import BeautifulSoup
 
+# Checks what the input is
 def check_input(url):
     result = open(url)
     soup = BeautifulSoup(result, 'html.parser')
     checkfor = soup.find('div', {'class': 'fxs-blade-title-subtitleText msportalfx-tooltip-overflow fxs-portal-subtext'})
+    checkforSecurity = soup.find('div', {'class': 'fxs-breadcrumb-crumb fxs-portal-text fxs-breadcrumb-crumb-active'})
     checkfor = f"{checkfor.text}"
+    print(checkfor)
    
     if checkfor:
         if checkfor == "Device configuration profile":
@@ -24,9 +44,20 @@ def check_input(url):
         if checkfor == "Device Configuration Profiles - Device restrictions":
             device_restrictions(url)
 
+        if checkfor == "Security baseline":
+            endpoint_protection(url)
+
+        else:
+         print("Unable to detect HTML file.")   
+
     else:
         print("Unable to detect HTML file.")
 
+# Endpoint Security section of Intune:
+# Security Baselines
+# Defender Baselines
+# Edge Baselines
+# Microsoft 365 Apps Baselines
 def endpoint_protection(url):
     result = open(url)
     soup = BeautifulSoup(result, 'html.parser')
@@ -49,33 +80,28 @@ def endpoint_protection(url):
                     if dropdown:
                         answer = dropdown
                         text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
-                        # print("layer2section - dropdown")
                         print(text)
                         continue
 
                     if radiobutton:
                         answer = radiobutton
                         text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
-                        # print("layer2section - radiobutton")
                         print(text)
                         continue
 
                     if edgeSettings:
                         answer = edgeSettings
                         text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
-                        # print("layer2section - edgesettings")
                         print(text)
                         continue
 
                     if checkyourself:
                         text = f"{headertext}Ł{question.text.strip()}ŁCheck the data yourself, value cannot be fetched."
-                        # print("layer2section - checkyourself")
                         print(text)
                         continue
 
                     else:
                         text = f"{headertext}Ł{question.text.strip()}ŁCheck the data yourself, value cannot be fetched."
-                        # print("layer2section - checkyourself - else")
                         print(text)
                         continue
 
@@ -90,36 +116,32 @@ def endpoint_protection(url):
                 if dropdown:
                     answer = dropdown
                     text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
-                    # print("section - dropdown")
                     print(text)
                     continue
 
                 if radiobutton:
                     answer = radiobutton
                     text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
-                    # print("section - radiobutton")
                     print(text)
                     continue
 
                 if edgeSettings:
                     answer = edgeSettings
                     text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
-                    # print("section - edgesettingd")
                     print(text)
                     continue
 
                 if checkyourself:
                     text = f"{headertext}Ł{question.text.strip()}ŁCheck the data yourself, value cannot be fetched."
-                    # print("section - check yourself")
                     print(text)
                     continue
 
                 else:
                     text = f"{headertext}Ł{question.text.strip()}ŁCheck the data yourself, value cannot be fetched."
-                    # print("section - check yourself - else")
                     print(text)
                     continue
 
+# MEM - Device restrictions
 def device_restrictions(url):
     # url = 'local location including extention'
     result = open(url)
@@ -136,6 +158,9 @@ def device_restrictions(url):
                 text = f"{sectiontitle.text}Ł{question.text}Ł{answer.text}"
                 print(text)
 
+# MEM - Endpoint protection profiles
+# MEM - Wi-Fi profiles
+# MEM - HTML elements for Wi-Fi and Endpoint protection profiles in MEM are the same.
 def wifi_endpointprotection(url):
     result = open(url)
     soup = BeautifulSoup(result, 'html.parser')
@@ -158,6 +183,7 @@ def wifi_endpointprotection(url):
                 text = f"{sectiontitle.text}Ł{question.text}Ł{answer.text}"
                 print(text)
 
+# MEM - Health monitoring
 def health_monitoring(url):
     result = open(url)
     soup = BeautifulSoup(result, 'html.parser')
@@ -171,6 +197,7 @@ def health_monitoring(url):
             text = f"{sectiontitle.text}Ł{question.text}Ł{answer.text.strip()}"
             print(text)
 
+# MEM -Settings catalog
 def settings_catalog(url):
     result = open(url)
     soup = BeautifulSoup(result, 'html.parser')
@@ -185,4 +212,4 @@ def settings_catalog(url):
             text = f"{sectiontitle}Ł{question.text}Ł{answer.text}"
             print(text)
 
-check_input("/Users/user/Downloads/DevConfig - Microsoft Intune admin center.html")
+check_input("/Users/user/Downloads/Exporting and reporting/SecurityBaseline_M365Apps_ZeroTolerance - Microsoft Intune admin center.html")
