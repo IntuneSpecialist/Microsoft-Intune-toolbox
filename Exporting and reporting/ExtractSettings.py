@@ -24,11 +24,13 @@ def check_input(url):
     result = open(url)
     soup = BeautifulSoup(result, 'html.parser')
     checkfor = soup.find('div', {'class': 'fxs-blade-title-subtitleText msportalfx-tooltip-overflow fxs-portal-subtext'})
-    checkforSecurity = soup.find('div', {'class': 'fxs-breadcrumb-crumb fxs-portal-text fxs-breadcrumb-crumb-active'})
     checkfor = f"{checkfor.text}"
    
     if checkfor:
         if checkfor == "Device configuration profile":
+            settings_catalog(url)
+
+        if checkfor == "Compliance policy - Windows 10 and later":
             settings_catalog(url)
 
         if checkfor == "Device Configuration Profiles - Wi-Fi":
@@ -47,10 +49,12 @@ def check_input(url):
             endpoint_protection(url)
 
         else:
-         print("Unable to detect HTML file.")   
+         print(f"Unable to detect HTML file.")
+         print(f"Detected type of policy: {checkfor}")
 
     else:
         print("Unable to detect HTML file.")
+        print("No policy type has been detected.")
 
 # Endpoint Security section of Intune:
 # Security Baselines
@@ -61,7 +65,8 @@ def endpoint_protection(url):
     result = open(url)
     soup = BeautifulSoup(result, 'html.parser')
     results = soup.find_all('div', {'class': 'fxs-portal-border fxc-accordion-section fxc-accordion-section-expanded'})
-    print(results[1:])
+
+    # Checks if the second row of 'fxs-portal-border fxc-accordion-section fxc-accordion-section-expanded' is empty, if so the profile is NOT an Edge Baseline.
     if results[1:] != []:
         results = results[1:]           
 
