@@ -26,7 +26,6 @@ def check_input(url):
     checkfor = soup.find('div', {'class': 'fxs-blade-title-subtitleText msportalfx-tooltip-overflow fxs-portal-subtext'})
     checkforSecurity = soup.find('div', {'class': 'fxs-breadcrumb-crumb fxs-portal-text fxs-breadcrumb-crumb-active'})
     checkfor = f"{checkfor.text}"
-    print(checkfor)
    
     if checkfor:
         if checkfor == "Device configuration profile":
@@ -62,20 +61,59 @@ def endpoint_protection(url):
     result = open(url)
     soup = BeautifulSoup(result, 'html.parser')
     results = soup.find_all('div', {'class': 'fxs-portal-border fxc-accordion-section fxc-accordion-section-expanded'})
+    print(results[1:])
+    if results[1:] != []:
+        results = results[1:]           
 
-    for result in results[1:]:
-        headertext = result.find('div', {'class': 'fxc-accordion-header-text msportalfx-tooltip-overflow'})
-        sections = result.find_all('div', {'class': 'fxc-weave-pccontrol fxc-section-control fxc-base msportalfx-customHtml msportalfx-form-formelement fxc-has-label'})
-        layer2section = result.find_all('div', {'class': 'fxc-weave-pccontrol fxc-section-control msportalfx-nested-control fxc-base msportalfx-customHtml msportalfx-form-formelement fxc-has-label'})
-        headertext = f"{headertext.text.strip()}"
+    for result in results:
+            headertext = result.find('div', {'class': 'fxc-accordion-header-text msportalfx-tooltip-overflow'})
+            sections = result.find_all('div', {'class': 'fxc-weave-pccontrol fxc-section-control fxc-base msportalfx-customHtml msportalfx-form-formelement fxc-has-label'})
+            layer2section = result.find_all('div', {'class': 'fxc-weave-pccontrol fxc-section-control msportalfx-nested-control fxc-base msportalfx-customHtml msportalfx-form-formelement fxc-has-label'})
+            headertext = f"{headertext.text.strip()}"
 
-        if layer2section:
-                for s in layer2section:
-                    question = s.find('div', {'class': 'azc-form-labelcontainer azc-text-label'})
-                    edgeSettings = s.find('div', {'data-bind': 'text: customContent'})
-                    dropdown = s.find('div', {'class': 'azc-formControl azc-input fxc-dropdown-open msportalfx-tooltip-overflow azc-validation-border fxc-dropdown-input azc-disabled'})
-                    radiobutton = s.find('li', {'class': 'fxs-portal-border azc-optionPicker-item fxs-portal-button-primary fxs-button-disabled fxs-portal-optionPicker-disabled azc-disabled'})
-                    checkyourself = s.find('div', {'class': 'azc-inputbox-wrapper azc-numericTextBox-wrapper'})
+            if layer2section:
+                    for s in layer2section:
+                        question = s.find('div', {'class': 'azc-form-labelcontainer azc-text-label'})
+                        edgeSettings = s.find('div', {'data-bind': 'text: customContent'})
+                        dropdown = s.find('div', {'class': 'azc-formControl azc-input fxc-dropdown-open msportalfx-tooltip-overflow azc-validation-border fxc-dropdown-input azc-disabled'})
+                        radiobutton = s.find('li', {'class': 'fxs-portal-border azc-optionPicker-item fxs-portal-button-primary fxs-button-disabled fxs-portal-optionPicker-disabled azc-disabled'})
+                        checkyourself = s.find('div', {'class': 'azc-inputbox-wrapper azc-numericTextBox-wrapper'})
+
+                        if dropdown:
+                            answer = dropdown
+                            text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
+                            print(text)
+                            continue
+
+                        if radiobutton:
+                            answer = radiobutton
+                            text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
+                            print(text)
+                            continue
+
+                        if edgeSettings:
+                            answer = edgeSettings
+                            text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
+                            print(text)
+                            continue
+
+                        if checkyourself:
+                            text = f"{headertext}Ł{question.text.strip()}ŁCheck the data yourself, value cannot be fetched."
+                            print(text)
+                            continue
+
+                        else:
+                            text = f"{headertext}Ł{question.text.strip()}ŁCheck the data yourself, value cannot be fetched."
+                            print(text)
+                            continue
+
+            for section in sections:                      
+                    question = section.find('div', {'class': 'azc-form-labelcontainer azc-text-label'})
+                    edgeSettings = section.find('div', {'data-bind': 'text: customContent'})
+                    dropdown = section.find('div', {'class': 'azc-formControl azc-input fxc-dropdown-open msportalfx-tooltip-overflow azc-validation-border fxc-dropdown-input azc-disabled'})
+                    radiobutton = section.find('li', {'class': 'fxs-portal-border azc-optionPicker-item fxs-portal-button-primary fxs-button-disabled fxs-portal-optionPicker-disabled azc-disabled'})
+                    checkyourself = section.find('div', {'class': 'azc-inputbox-wrapper azc-numericTextBox-wrapper'})
+                    text = f"{question.text.strip()}"
 
                     if dropdown:
                         answer = dropdown
@@ -104,42 +142,6 @@ def endpoint_protection(url):
                         text = f"{headertext}Ł{question.text.strip()}ŁCheck the data yourself, value cannot be fetched."
                         print(text)
                         continue
-
-        for section in sections:                      
-                question = section.find('div', {'class': 'azc-form-labelcontainer azc-text-label'})
-                edgeSettings = section.find('div', {'data-bind': 'text: customContent'})
-                dropdown = section.find('div', {'class': 'azc-formControl azc-input fxc-dropdown-open msportalfx-tooltip-overflow azc-validation-border fxc-dropdown-input azc-disabled'})
-                radiobutton = section.find('li', {'class': 'fxs-portal-border azc-optionPicker-item fxs-portal-button-primary fxs-button-disabled fxs-portal-optionPicker-disabled azc-disabled'})
-                checkyourself = section.find('div', {'class': 'azc-inputbox-wrapper azc-numericTextBox-wrapper'})
-                text = f"{question.text.strip()}"
-
-                if dropdown:
-                    answer = dropdown
-                    text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
-                    print(text)
-                    continue
-
-                if radiobutton:
-                    answer = radiobutton
-                    text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
-                    print(text)
-                    continue
-
-                if edgeSettings:
-                    answer = edgeSettings
-                    text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
-                    print(text)
-                    continue
-
-                if checkyourself:
-                    text = f"{headertext}Ł{question.text.strip()}ŁCheck the data yourself, value cannot be fetched."
-                    print(text)
-                    continue
-
-                else:
-                    text = f"{headertext}Ł{question.text.strip()}ŁCheck the data yourself, value cannot be fetched."
-                    print(text)
-                    continue
 
 # MEM - Device restrictions
 def device_restrictions(url):
@@ -212,4 +214,4 @@ def settings_catalog(url):
             text = f"{sectiontitle}Ł{question.text}Ł{answer.text}"
             print(text)
 
-check_input("/Users/user/Downloads/Exporting and reporting/SecurityBaseline_M365Apps_ZeroTolerance - Microsoft Intune admin center.html")
+check_input("")
