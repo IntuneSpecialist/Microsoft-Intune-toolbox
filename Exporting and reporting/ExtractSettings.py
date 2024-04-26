@@ -17,6 +17,7 @@
 
 import bs4
 import requests
+import re
 from bs4 import BeautifulSoup
 
 # Checks what the input is
@@ -31,7 +32,7 @@ def check_input(url):
             settings_catalog(url)
 
         elif checkfor == "Compliance policy - Windows 10 and later":
-            settings_catalog(url)
+            compliance_policy(url)
 
         elif checkfor == "Device Configuration Profiles - Wi-Fi":
             wifi_endpointprotection(url)
@@ -154,6 +155,60 @@ def endpoint_protection(url):
                             print(text)
                             continue
 
+def compliance_policy(url):
+    result = open(url)
+    soup = BeautifulSoup(result, 'html.parser')
+    results = soup.find_all('div', {'class': 'fxs-portal-border fxc-accordion-section fxc-accordion-section-expanded'})
+    settingspanecollapsed = soup.find('div', {'class': 'fxs-portal-border fxc-accordion-section fxc-accordion-section-collapsed'})
+
+    # Checks if a settings pane is still collapsed what causes a wrong export.
+    if settingspanecollapsed:
+        settingspage_collapsed()
+
+    else:
+        for result in results:
+            headertext = result.find('div', {'class': 'fxc-accordion-header-text msportalfx-tooltip-overflow'})
+            sections = result.find_all('div', {'class': 'fxc-accordion-panel'})
+            headertext = f"{headertext.text.strip()}"
+
+            for s in sections:
+                rows = s.find_all('div', {'class': re.compile('fxc-weave-pccontrol fxc-section-control ext-wizard-control-spacer.*')})
+                    
+                for r in rows:
+                    questions = r.find_all('label', {'class': 'azc-form-label'})
+                    edgeSettings = r.find('div', {'data-bind': 'text: customContent'})
+                    dropdown = r.find('div', {'class': 'azc-formControl azc-input fxc-dropdown-open msportalfx-tooltip-overflow azc-validation-border fxc-dropdown-input azc-disabled'})
+                    radiobutton = r.find('li', {'class': 'fxs-portal-border azc-optionPicker-item fxs-portal-button-primary'})
+                    checkyourself = r.find('div', {'class': 'azc-inputbox-wrapper azc-numericTextBox-wrapper'})
+
+                    if dropdown:
+                        answer = dropdown
+                        text = f"{headertext}Ł{r.text.strip()}Ł{answer.text}"
+                        print(text)
+                        continue
+
+                    if radiobutton:
+                        answer = radiobutton
+                        text = f"{headertext}Ł{r.text.strip()}Ł{answer.text}"
+                        print(text)
+                        continue
+
+                    if edgeSettings:
+                        answer = edgeSettings
+                        text = f"{headertext}Ł{r.text.strip()}Ł{answer.text}"
+                        print(text)
+                        continue
+
+                    if checkyourself:
+                        text = f"{headertext}Ł{r.text.strip()}ŁCheck the data yourself, value cannot be fetched."
+                        print(text)
+                        continue
+
+                    else:
+                        text = f"{headertext}Ł{r.text.strip()}ŁCheck the data yourself, value cannot be fetched."
+                        print(text)
+                        continue
+
 # MEM - Device restrictions
 def device_restrictions(url):
     # url = 'local location including extention'
@@ -257,6 +312,6 @@ def settingspage_collapsed():
         print("One or more settings panes are still collapsed. This will result in a wrong export. Make sure that all the panes are expanded!")
         print("The script will stop.")
 
-# url = r'Place the path here including .html'
+url = r""
 url = url.replace("\\", "/")
 check_input(url)
