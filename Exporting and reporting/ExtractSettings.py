@@ -90,9 +90,23 @@ def endpoint_protection(url):
                             dropdown = s.find('div', {'class': 'azc-formControl azc-input fxc-dropdown-open msportalfx-tooltip-overflow azc-validation-border fxc-dropdown-input azc-disabled'})
                             radiobutton = s.find('li', {'class': 'fxs-portal-border azc-optionPicker-item fxs-portal-button-primary fxs-button-disabled fxs-portal-optionPicker-disabled azc-disabled'})
                             checkyourself = s.find('div', {'class': 'azc-inputbox-wrapper azc-numericTextBox-wrapper'})
+                            disabledtextfielddiv = s.find('div', {'class': 'azc-input azc-formControl azc-validation-border msportalfx-tooltip-overflow azc-disabled'})
+                            disabledtextfieldinput = s.find('input', {'class': 'azc-input azc-formControl azc-validation-border msportalfx-tooltip-overflow azc-disabled'})
 
                             if dropdown:
                                 answer = dropdown
+                                text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
+                                print(text)
+                                continue
+
+                            if disabledtextfielddiv:
+                                answer = disabledtextfielddiv
+                                text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
+                                print(text)
+                                continue
+
+                            if disabledtextfieldinput:
+                                answer = disabledtextfieldinput
                                 text = f"{headertext}Ł{question.text.strip()}Ł{answer.text}"
                                 print(text)
                                 continue
@@ -312,6 +326,6 @@ def settingspage_collapsed():
         print("One or more settings panes are still collapsed. This will result in a wrong export. Make sure that all the panes are expanded!")
         print("The script will stop.")
 
-url = r""
+url = r''
 url = url.replace("\\", "/")
 check_input(url)
